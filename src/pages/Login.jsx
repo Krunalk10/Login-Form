@@ -1,78 +1,177 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import useAuthStore from '../store/authStore'
 
 function Login() {
   const navigate = useNavigate()
   const { login } = useAuthStore()
+
   const [formData, setFormData] = useState({ email: '', password: '' })
-  const [error, setError] = useState('')
+  
+  const [errors, setErrors] = useState({ email: '', password: '', form: '' })
+  
+  const [touched, setTouched] = useState({ email: false, password: false })
 
-  const handleSubmit = (e) => {
+  const runClientSideValidation = (fieldName, fieldValue) => {
+    let errorMessage = ''
+
+    if (fieldName === 'email') {
+      if (!fieldValue.trim()) {
+        errorMessage = 'Email address cannot be blank.'
+      } else {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailPattern.test(fieldValue)) {
+          errorMessage = 'Please enter a valid format (e.g., name@domain.com).'
+        }
+      }
+    }
+
+    if (fieldName === 'password') {
+      if (!fieldValue) {
+        errorMessage = 'Password field is required.'
+      } else if (fieldValue.length < 6) {
+        errorMessage = 'Security requirement: Must be at least 6 characters.'
+      }
+    }
+
+    setErrors((prev) => ({ ...prev, [fieldName]: errorMessage, form: '' }))
+    return errorMessage
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+    
+    if (touched[name]) {
+      runClientSideValidation(name, value)
+    }
+  }
+
+  const handleInputBlur = (e) => {
+    const { name, value } = e.target
+    setTouched((prev) => ({ ...prev, [name]: true }))
+    runClientSideValidation(name, value)
+  }
+
+  const handleFormSubmit = (e) => {
     e.preventDefault()
-    setError('')
 
-    if (!formData.email || !formData.password) {
-      setError('Please fill out all fields.')
+    setTouched({ email: true, password: true })
+
+    const emailErrorResult = runClientSideValidation('email', formData.email)
+    const passwordErrorResult = runClientSideValidation('password', formData.password)
+
+    if (emailErrorResult || passwordErrorResult) {
       return
     }
 
-    const success = login(formData.email, formData.password)
-    if (success) {
+    const isAuthorized = login(formData.email, formData.password)
+    if (isAuthorized) {
       navigate('/home')
     } else {
-      setError('Invalid email or password.')
+      setErrors((prev) => ({
+        ...prev,
+        form: 'The email or password you entered matches no registered records.',
+      }))
     }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100 p-4">
       <motion.div 
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="bg-white/80 backdrop-blur-md shadow-xl rounded-3xl p-8 w-full max-w-md border border-white"
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+        className="bg-white/90 backdrop-blur-md shadow-xl rounded-3xl p-8 w-full max-w-md border border-white"
       >
-        <h1 className="text-4xl font-bold text-center text-emerald-800 mb-2 tracking-tight">
+        <h1 className="text-4xl font-bold text-center text-emerald-800 mb-1 tracking-tight">
           Welcome Back
         </h1>
         <p className="text-center text-stone-500 mb-6 text-sm">
-          Simplify your day. Streamline your tasks.
+          Please enter your credentials to manage your tasks.
         </p>
 
-        {error && (
-          <div className="mb-4 p-3 rounded-xl bg-red-50 text-red-600 text-sm font-medium border border-red-100 text-center">
-            {error}
-          </div>
-        )}
+        <AnimatePresence>
+          {errors.form && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="mb-4 p-3 rounded-xl bg-red-50 text-red-600 text-xs font-semibold border border-red-100 text-center"
+            >
+              🛑 {errors.form}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold uppercase text-stone-500 mb-1 ml-1">Email Address</label>
+        <form onSubmit={handleFormSubmit} className="space-y-4" noValidate>
+          
+          <div className="flex flex-col">
+            <label className="text-xs font-bold uppercase text-stone-500 mb-1.5 ml-1 tracking-wider">
+              Email Address
+            </label>
             <input
               type="email"
+              name="email"
               value={formData.email}
               placeholder="you@example.com"
-              className="w-full p-3.5 rounded-xl bg-stone-50 border border-stone-200 outline-none focus:ring-2 focus:ring-emerald-400 transition-all text-stone-800"
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              className={`w-full p-3.5 rounded-xl bg-stone-50/50 border outline-none transition-all text-sm text-stone-800 ${
+                touched.email && errors.email 
+                  ? 'border-red-400 focus:ring-2 focus:ring-red-100 bg-red-50/10' 
+                  : 'border-stone-200 focus:ring-2 focus:ring-emerald-400'
+              }`}
             />
+            <AnimatePresence>
+              {touched.email && errors.email && (
+                <motion.span
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="text-xs font-medium text-red-500 mt-1 ml-1 block"
+                >
+                  {errors.email}
+                </motion.span>
+              )}
+            </AnimatePresence>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold uppercase text-stone-500 mb-1 ml-1">Password</label>
+          <div className="flex flex-col">
+            <label className="text-xs font-bold uppercase text-stone-500 mb-1.5 ml-1 tracking-wider">
+              Password
+            </label>
             <input
               type="password"
+              name="password"
               value={formData.password}
               placeholder="••••••••"
-              className="w-full p-3.5 rounded-xl bg-stone-50 border border-stone-200 outline-none focus:ring-2 focus:ring-emerald-400 transition-all text-stone-800"
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              className={`w-full p-3.5 rounded-xl bg-stone-50/50 border outline-none transition-all text-sm text-stone-800 ${
+                touched.password && errors.password 
+                  ? 'border-red-400 focus:ring-2 focus:ring-red-100 bg-red-50/10' 
+                  : 'border-stone-200 focus:ring-2 focus:ring-emerald-400'
+              }`}
             />
+            <AnimatePresence>
+              {touched.password && errors.password && (
+                <motion.span
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="text-xs font-medium text-red-500 mt-1 ml-1 block"
+                >
+                  {errors.password}
+                </motion.span>
+              )}
+            </AnimatePresence>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl font-medium shadow-md shadow-emerald-600/10 transition-all transform active:scale-[0.98] mt-2"
+            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl font-semibold shadow-sm transition-all transform active:scale-[0.99] mt-4 text-sm"
           >
             Sign In
           </button>

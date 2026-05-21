@@ -1,9 +1,7 @@
 import { create } from 'zustand'
 
 const useAuthStore = create((set, get) => ({
-  // Holds all registered users
   users: JSON.parse(localStorage.getItem('registered_users')) || [],
-  // Holds the currently logged-in user session
   user: JSON.parse(localStorage.getItem('current_session_user')) || null,
 
   login: (email, password) => {
@@ -21,7 +19,6 @@ const useAuthStore = create((set, get) => ({
   signup: (userData) => {
     const { users } = get()
     
-    // Simple check to ensure email isn't duplicated
     if (users.some(u => u.email === userData.email)) {
       return { success: false, message: 'Email already registered!' }
     }

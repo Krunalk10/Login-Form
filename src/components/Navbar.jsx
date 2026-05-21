@@ -17,7 +17,7 @@ function Navbar() {
           ✓
         </div>
         <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-800 to-teal-700 bg-clip-text text-transparent hidden sm:block">
-          FlowState
+          ToDo
         </h1>
       </div>
 

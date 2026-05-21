@@ -9,7 +9,6 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {/* Session protected conditional route triggers */}
       <Route
         path="/"
         element={user ? <Navigate to="/home" replace /> : <Login />}
@@ -22,7 +21,6 @@ function AppRoutes() {
         path="/home"
         element={user ? <Home /> : <Navigate to="/" replace />}
       />
-      {/* Fallback Catch All redirection endpoint */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
