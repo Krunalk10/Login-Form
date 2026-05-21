@@ -1,11 +1,11 @@
-function Footer() {
-  const year = new Date().getFullYear();
+// function Footer() {
+//   const year = new Date().getFullYear();
 
-  return (
-    <footer className="footer">
+//   return (
+//     <footer className="footer">
      
-    </footer>
-  );
-}
+//     </footer>
+//   );
+// }
 
-export default Footer;
+// export default Footer;
