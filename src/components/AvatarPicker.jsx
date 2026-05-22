@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 
 function AvatarPicker({ 
   onAvatarSelected,
-  onSizeChange, // New callback prop to inform parent container
+  onSizeChange, 
   initialImage = null,
   name,
   email
@@ -18,7 +18,6 @@ function AvatarPicker({
     large: 'w-16 h-16 sm:w-20 sm:h-20'
   }
 
-  // Sync initial configuration size with the Navbar layout on load
   useEffect(() => {
     if (onSizeChange) {
       onSizeChange(selectedSize)
@@ -28,7 +27,7 @@ function AvatarPicker({
   const handleSizeSelect = (size) => {
     setSelectedSize(size)
     if (onSizeChange) {
-      onSizeChange(size) // Push choice upstream instantly
+      onSizeChange(size)
     }
   }
 

@@ -11,10 +11,8 @@ function Navbar() {
   const [showImgSection, setShowImgSection] = useState(false)
   const [tempAvatar, setTempAvatar] = useState(null)
   
-  // Track avatar sizing choice inside local component view layer
   const [avatarSize, setAvatarSize] = useState('medium')
 
-  // Layout styling sizes mapping object for top-navbar elements
   const avatarNavbarSizes = {
     small: 'w-8 h-8',
     medium: 'w-10 h-10 sm:w-12 sm:h-12',
@@ -48,7 +46,6 @@ function Navbar() {
 
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-3">
-            {/* Dynamic sizing styles now target this parent wrapper wrapper layout */}
             <motion.div 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -82,7 +79,6 @@ function Navbar() {
         </div>
       </div>
 
-      {/* Expandable Inner Panel */}
       <AnimatePresence initial={false}>
         {showImgSection && (
           <motion.div
@@ -106,7 +102,6 @@ function Navbar() {
                   Upload a custom profile layout image. Previews show responsively scaling weights.
                 </p>
                 
-                {/* Passed onSizeChange handler configuration here */}
                 <AvatarPicker 
                   initialImage={user?.avatar} 
                   name={user?.name}
