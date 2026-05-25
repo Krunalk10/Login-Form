@@ -110,126 +110,188 @@ function CategoryModal({ cat, tasks, onClose }) {
 
       {/* modal card */}
       <motion.div
-        className="relative z-10 bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden border border-stone-100"
-        initial={{ scale: 0.85, y: 40, opacity: 0 }}
-        animate={{ scale: 1, y: 0, opacity: 1 }}
-        exit={{ scale: 0.9, y: 20, opacity: 0 }}
-        transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* ── Header ── */}
-        <div className={`bg-gradient-to-br ${cat.gradient} px-6 pt-6 pb-4 border-b ${cat.border} flex-shrink-0`}>
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-4xl leading-none">{cat.icon}</span>
-              <div>
-                <h2 className={`text-xl font-bold ${cat.text}`}>{cat.label}</h2>
-                <p className="text-xs text-stone-500 mt-0.5">
-                  {tasks.length} task{tasks.length !== 1 ? 's' : ''} · {complete} done
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-stone-400 hover:text-stone-700 transition-all text-sm shadow-xs"
-            >
-              ✕
-            </button>
-          </div>
+  className="relative z-10 bg-white rounded-3xl shadow-2xl w-full max-w-lg h-[92vh] md:max-h-[85vh] flex flex-col overflow-hidden border border-stone-100"
+  initial={{ scale: 0.85, y: 40, opacity: 0 }}
+  animate={{ scale: 1, y: 0, opacity: 1 }}
+  exit={{ scale: 0.9, y: 20, opacity: 0 }}
+  transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+  onClick={(e) => e.stopPropagation()}
+>
+  {/* ── Header ── */}
+  <div
+    className={`bg-gradient-to-br ${cat.gradient} px-4 md:px-6 pt-5 md:pt-6 pb-4 border-b ${cat.border} flex-shrink-0`}
+  >
+    <div className="flex items-start justify-between">
+      <div className="flex items-center gap-3">
+        <span className="text-3xl md:text-4xl leading-none">
+          {cat.icon}
+        </span>
 
-          {/* progress bar */}
-          <div className="mt-4">
-            <div className="flex justify-between text-xs text-stone-500 mb-1">
-              <span>Progress</span>
-              <span className="font-bold">{progress}%</span>
-            </div>
-            <div className="h-1.5 bg-white/60 rounded-full overflow-hidden">
-              <motion.div
-                className={`h-full ${cat.accent} rounded-full`}
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
-              />
-            </div>
-          </div>
-        </div>
+        <div>
+          <h2 className={`text-lg md:text-xl font-bold ${cat.text}`}>
+            {cat.label}
+          </h2>
 
-        {/* ── Add Task Form (CREATE) ── */}
-        <div className="px-5 py-4 border-b border-stone-100 flex-shrink-0 bg-stone-50/50">
-          <p className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">
-            Add to {cat.label}
+          <p className="text-xs text-stone-500 mt-0.5">
+            {tasks.length} task{tasks.length !== 1 ? 's' : ''} ·{' '}
+            {complete} done
           </p>
-          <div className="flex gap-2 flex-col sm:flex-row">
-            <input
-              type="text"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-              placeholder={`New ${cat.label.toLowerCase()} task…`}
-              className={`flex-1 px-3 py-2 text-sm border border-stone-200 rounded-xl outline-none focus:ring-2 ${cat.inputFocus} bg-white text-stone-800 transition-all`}
-            />
-            <select
-              value={newStatus}
-              onChange={(e) => setNewStatus(e.target.value)}
-              className="px-3 py-2 text-sm border border-stone-200 rounded-xl bg-white outline-none text-stone-700"
-            >
-              <option value="Not Complete">Not Complete</option>
-              <option value="Partially Complete">Partially Complete</option>
-              <option value="Complete">Complete</option>
-            </select>
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={handleAdd}
-              className={`${cat.btnBg} text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all whitespace-nowrap`}
-            >
-              + Add
-            </motion.button>
-          </div>
         </div>
+      </div>
 
-        {/* ── Task List (READ + UPDATE + DELETE via TaskItem) ── */}
-        <div className="overflow-y-auto flex-1 p-4 space-y-2.5">
-          {tasks.length === 0 ? (
-            <div className="text-center py-10 text-stone-400 text-sm">
-              <p className="text-3xl mb-3">✨</p>
-              <p>No tasks yet. Add one above!</p>
-            </div>
-          ) : (
-            <AnimatePresence mode="popLayout">
-              {tasks.map((task, i) => (
-                <motion.div
-                  key={task.id}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 12, height: 0, marginBottom: 0 }}
-                  transition={{ delay: i * 0.04 }}
-                >
-                  {/* TaskItem handles edit title (UPDATE) and delete (DELETE) and status change (UPDATE) */}
-                  <TaskItem task={task} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          )}
-        </div>
+      {/* Close */}
+      <button
+        onClick={onClose}
+        className="w-8 h-8 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-stone-400 hover:text-stone-700 transition-all text-sm shadow-xs"
+      >
+        ✕
+      </button>
+    </div>
 
-        {/* ── Footer summary ── */}
-        {tasks.length > 0 && (
-          <div className="flex-shrink-0 px-5 py-3 border-t border-stone-100 bg-stone-50/50 flex gap-4 text-xs text-stone-500">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              {tasks.filter(t => t.status === 'Complete').length} Complete
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-amber-400" />
-              {tasks.filter(t => t.status === 'Partially Complete').length} Partial
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-stone-300" />
-              {tasks.filter(t => t.status === 'Not Complete').length} Open
-            </span>
-          </div>
-        )}
-      </motion.div>
+    {/* Progress */}
+    <div className="mt-4">
+      <div className="flex justify-between text-xs text-stone-500 mb-1">
+        <span>Progress</span>
+
+        <span className="font-bold">{progress}%</span>
+      </div>
+
+      <div className="h-1.5 bg-white/60 rounded-full overflow-hidden">
+        <motion.div
+          className={`h-full ${cat.accent} rounded-full`}
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{
+            duration: 0.6,
+            ease: 'easeOut',
+            delay: 0.2,
+          }}
+        />
+      </div>
+    </div>
+  </div>
+
+  {/* ── Add Task Form ── */}
+  <div className="px-4 md:px-5 py-4 border-b border-stone-100 flex-shrink-0 bg-stone-50/50">
+    <p className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">
+      Add to {cat.label}
+    </p>
+
+    <div className="flex flex-col gap-2">
+      {/* Input */}
+      <input
+        type="text"
+        value={newTitle}
+        onChange={(e) => setNewTitle(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+        placeholder={`New ${cat.label.toLowerCase()} task…`}
+        className={`w-full px-3 py-3 text-sm border border-stone-200 rounded-xl outline-none focus:ring-2 ${cat.inputFocus} bg-white text-stone-800 transition-all`}
+      />
+
+      {/* Bottom Controls */}
+      <div className="flex flex-col sm:flex-row gap-2">
+        <select
+          value={newStatus}
+          onChange={(e) => setNewStatus(e.target.value)}
+          className="flex-1 px-3 py-3 text-sm border border-stone-200 rounded-xl bg-white outline-none text-stone-700"
+        >
+          <option value="Not Complete">Not Complete</option>
+
+          <option value="Partially Complete">
+            Partially Complete
+          </option>
+
+          <option value="Complete">Complete</option>
+        </select>
+
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={handleAdd}
+          className={`${cat.btnBg} text-white px-4 py-3 rounded-xl text-sm font-semibold transition-all whitespace-nowrap`}
+        >
+          + Add Task
+        </motion.button>
+
+      </div>
+    </div>
+  </div>
+
+  {/* ── Task List ── */}
+  <div className="overflow-y-auto flex-1 p-4 space-y-2.5">
+    {tasks.length === 0 ? (
+      <div className="text-center py-10 text-stone-400 text-sm">
+        <p className="text-3xl mb-3">✨</p>
+
+        <p>No tasks yet. Add one above!</p>
+      </div>
+      
+    ) : (
+      <AnimatePresence mode="popLayout">
+        {tasks.map((task, i) => (
+          <motion.div
+            key={task.id}
+            initial={{ opacity: 0, x: -12 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{
+              opacity: 0,
+              x: 12,
+              height: 0,
+              marginBottom: 0,
+            }}
+            transition={{ delay: i * 0.04 }}
+          >
+            <TaskItem task={task} />
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    )}
+  </div>
+
+  {/* ── Footer ── */}
+  <div className="flex-shrink-0 px-4 md:px-5 py-3 border-t border-stone-100 bg-stone-50/50">
+    {/* Stats */}
+    {tasks.length > 0 && (
+      <div className="flex flex-wrap gap-4 text-xs text-stone-500 mb-3">
+        <span className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          {
+            tasks.filter((t) => t.status === 'Complete')
+              .length
+          }{' '}
+          Complete
+        </span>
+
+        <span className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-amber-400" />
+          {
+            tasks.filter(
+              (t) => t.status === 'Partially Complete'
+            ).length
+          }{' '}
+          Partial
+        </span>
+
+        <span className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-stone-300" />
+          {
+            tasks.filter(
+              (t) => t.status === 'Not Complete'
+            ).length
+          }{' '}
+          Open
+        </span>
+      </div>
+    )}
+
+    {/* Done Button */}
+    <button
+      onClick={onClose}
+      className="w-full bg-stone-900 hover:bg-black text-white py-3 rounded-xl text-sm font-semibold transition-all"
+    >
+      Done
+    </button>
+  </div>
+</motion.div>
     </motion.div>
   )
 }

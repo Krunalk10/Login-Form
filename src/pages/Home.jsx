@@ -88,12 +88,13 @@ function Home() {
         </div>
 
         {/* ── Category overview cards (click → popup modal) ── */}
-        <div className="mb-2">
-          <h3 className="text-stone-700 font-bold text-xs tracking-wide uppercase mb-4 px-1">
-            Categories
-          </h3>
-          <CategoryCards />
-        </div>
+     <div className="hidden md:block mb-2">
+  <h3 className="text-stone-700 font-bold text-xs tracking-wide uppercase mb-4 px-1">
+    Categories
+  </h3>
+
+  <CategoryCards />
+</div>
 
         {/* ── Add task form ── */}
         <TaskForm currentCategory={selectedCategory === 'All' ? 'Work' : selectedCategory} />
